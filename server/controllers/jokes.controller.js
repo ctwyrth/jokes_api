@@ -8,27 +8,38 @@ module.exports.findAllJokes = (req, res) => {
 
 module.exports.findOneSingleJoke = (req, res) => {
    Joke.findOne({ _id: req.params.id })
-      .then(oneSingleJoke => res.json({ joke: oneSingleJoke }))
+      .then(oneSingleJoke => res.json(oneSingleJoke))
       .catch(err => res.json(err))
 };
 
 module.exports.createNewJoke = (req, res) => {
    Joke.create(req.body)
-      .then(newJoke => res.json({ joke: newJoke }))
+      .then(newJoke => res.json(newJoke))
       .catch(err => res.json(err))
 };
 
 module.exports.updateExistingJoke = (req, res) => {
    Joke.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, runValidators: true })
-      .then(updatedJoke => res.json({ joke: updatedJoke }))
+      .then(updatedJoke => res.json(updatedJoke))
       .catch(err => res.json(err))
 };
 
 module.exports.deleteAnExistingJoke = (req, res) => {
    Joke.deleteOne({ _id: req.params.id })
-      .then(result => res.json({ result: result }))
+      .then(result => res.json(result))
       .catch(err => res.json(err))
 };
+
+module.exports.findRandomJoke = (req, res) => {
+   Joke.count()
+      .then(count => {
+         const idx = Math.floor(Math.random() * count);
+         Joke.findOne().skip(idx)
+            .then(joke => res.json(joke))
+            .catch(err => res.json(err));
+      })
+      .catch(err => res.json(err));
+}
 
 module.exports.exists = (req, res) => {
    Joke.exists({name: req.body.name})
